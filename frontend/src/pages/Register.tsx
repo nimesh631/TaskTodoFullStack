@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import api from "../api/axios"
+import { register } from '../services/authService';
 import {useNavigate} from 'react-router-dom';
 
 function Register() {
@@ -10,7 +10,7 @@ function Register() {
 
     const handleRegister = async () => {
         try{
-            await api.post("auth/register",{email, password});
+            await register(email,password);
             navigate("/login");
         }catch(err){
             setError("Registration failed. try another email.");

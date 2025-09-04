@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import { listTasks } from "../services/task.service";
+import { createTask } from "../services/task.service";
+import { taskUpdate } from "../services/task.service";
+import { taskDelete } from "../services/task.service";
 import TaskCard from "../components/TaskCard";
 
 export default function Tasks() {
@@ -9,9 +12,9 @@ export default function Tasks() {
 
   const fetchTasks = async () => {
     try {
-      const res = await api.get("/tasks");
-      setTasks(res.data);
-      if(res.data.length > 0) setUser(res.data[0].user);
+      const data = await listTasks(); 
+      setTasks(data);
+      if(data.length > 0) setUser(data[0].user);
     } catch (err) {
       console.error(err);
       setTasks([]);
@@ -22,7 +25,7 @@ export default function Tasks() {
   const addTask = async () => {
     if (!title) return;
     try {
-      await api.post("/tasks", { title });
+      await createTask(title);
       setTitle("");
       fetchTasks();
     } catch (err) {
@@ -32,16 +35,16 @@ export default function Tasks() {
 
   const updateTask = async (id: number, newTitle: string) => {
     try{
-    await api.patch(`/tasks/${id}`, {title: newTitle});
-    fetchTasks();
-    } catch(err){
+  await taskUpdate(id, { title: newTitle });
+  fetchTasks();
+}catch(err){
       console.error(err);
     }
   };
 
   const deleteTask = async (id: number) => {
     try {
-      await api.delete(`/tasks/${id}`);
+      await taskDelete(id);
       fetchTasks();
     } catch (err) {
       console.error(err);
@@ -49,7 +52,7 @@ export default function Tasks() {
   };
 
   const toggleCompleted = async (id: number, completed: boolean)=>{
-    await api.patch(`/tasks/${id}`, {completed});
+    await taskUpdate(id,{completed});
     fetchTasks();
   }
   useEffect(() => {

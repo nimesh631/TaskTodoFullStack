@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import api from "../api/axios"
+import { login } from '../services/authService';
 import {useNavigate} from 'react-router-dom';
 
 function Login() {
@@ -10,14 +10,14 @@ function Login() {
 
     const handleLogin = async () => {
         try{
-            const res = await api.post("/auth/login",{email, password});
-            localStorage.setItem("token", res.data.access_token);
+            const data = await login(email,password);
+            localStorage.setItem("token", data.access_token);
             navigate("/tasks");
         }catch(err){
             setError("Invalid credentials");
         }
     }
-
+ 
   return (
     <div className='flex justify-center items-center min-h-screen bg-gray-200'>
         <div className='bg-white p-6 rounded-lg shadow-lg w-96'>
